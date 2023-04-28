@@ -1,0 +1,29 @@
+reports_dir: reports
+
+data_load:
+  dataset: micro
+  sampling:
+    enable: true
+    size: 5
+
+train:
+  epochs: 5
+
+evaluate:
+  datasets: ['micro', 'customer-1', 'customer-2']
+  size: 5000
+  metrics: [f1, roc-auc]
+  metrics_dir: metrics
+  plots_cm: reports/plot_confusion_matrix.png
+
+collect_metrics:
+  metrics: metrics.json
+
+check_metrics:
+  rules:
+    f1:
+      low: 0.5
+      high: 1.0
+    roc-auc:
+      low: 0.4
+  report: alerts.png

@@ -1,0 +1,9 @@
+.DS_Store
+
+# Environments
+.venv
+
+# IDEs
+.vscode
+.idea
+.demo*/

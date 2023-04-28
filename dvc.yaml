@@ -1,0 +1,44 @@
+stages:
+  
+  data_load:
+    cmd: python stages/data_load.py
+    deps:
+    - stages/data_load.py
+    params:
+    - data_load
+  
+  
+  train:
+    cmd: python stages/train.py
+    deps:
+    - stages/train.py
+    params:
+    - train
+
+
+  evaluate:
+    foreach:
+      ${evaluate.datasets}
+    do:
+      cmd: python stages/evaluate.py --config=params.yaml --dataset=${item}
+      deps:
+      - stages/evaluate.py
+      params:
+      - reports_dir
+      - evaluate
+      metrics:
+      - ${reports_dir}/${evaluate.metrics_dir}/metrics_${item}.json:
+          cache: false
+  
+
+  collect_metrics:
+    cmd: python stages/collect_metrics.py --config=params.yaml
+    deps:
+    - stages/collect_metrics.py
+    - ${reports_dir}/${evaluate.metrics_dir}
+    params:
+    - reports_dir
+    - collect_metrics
+    metrics:
+    - ${reports_dir}/${collect_metrics.metrics}:
+        cache: false
