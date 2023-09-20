@@ -1,0 +1,121 @@
+schema: '2.0'
+stages:
+  data_load:
+    cmd: python stages/data_load.py
+    deps:
+    - path: stages/data_load.py
+      hash: md5
+      md5: 4716d5647efacbb2a8b61c24c509a6fe
+      size: 379
+    params:
+      params.yaml:
+        data_load:
+          dataset: micro
+          sampling:
+            enable: true
+            size: 5
+  train:
+    cmd: python stages/train.py
+    deps:
+    - path: stages/train.py
+      hash: md5
+      md5: a5a1c98ef62db8ceefcfc0104b45fe3a
+      size: 197
+    params:
+      params.yaml:
+        train:
+          epochs: 5
+  evaluate@micro:
+    cmd: python stages/evaluate.py --config=params.yaml --dataset=micro
+    deps:
+    - path: stages/evaluate.py
+      hash: md5
+      md5: b63b20abb0ab04a88e1b46b9b16da6fd
+      size: 1109
+    params:
+      params.yaml:
+        evaluate:
+          datasets:
+          - micro
+          - customer-1
+          - customer-2
+          metrics:
+          - f1
+          - roc-auc
+          metrics_dir: metrics
+        reports_dir: reports
+    outs:
+    - path: reports/metrics/metrics_micro.json
+      hash: md5
+      md5: 55414754d93cd063b5b1b201480aa3b4
+      size: 59
+  evaluate@customer-1:
+    cmd: python stages/evaluate.py --config=params.yaml --dataset=customer-1
+    deps:
+    - path: stages/evaluate.py
+      hash: md5
+      md5: b63b20abb0ab04a88e1b46b9b16da6fd
+      size: 1109
+    params:
+      params.yaml:
+        evaluate:
+          datasets:
+          - micro
+          - customer-1
+          - customer-2
+          metrics:
+          - f1
+          - roc-auc
+          metrics_dir: metrics
+        reports_dir: reports
+    outs:
+    - path: reports/metrics/metrics_customer-1.json
+      hash: md5
+      md5: 188d15ca6811b7f4f3db3fdc35c1f7c6
+      size: 57
+  evaluate@customer-2:
+    cmd: python stages/evaluate.py --config=params.yaml --dataset=customer-2
+    deps:
+    - path: stages/evaluate.py
+      hash: md5
+      md5: b63b20abb0ab04a88e1b46b9b16da6fd
+      size: 1109
+    params:
+      params.yaml:
+        evaluate:
+          datasets:
+          - micro
+          - customer-1
+          - customer-2
+          metrics:
+          - f1
+          - roc-auc
+          metrics_dir: metrics
+        reports_dir: reports
+    outs:
+    - path: reports/metrics/metrics_customer-2.json
+      hash: md5
+      md5: 387d581a19e50cdbeb315a414a79c80b
+      size: 57
+  collect_metrics:
+    cmd: python stages/collect_metrics.py --config=params.yaml
+    deps:
+    - path: reports/metrics
+      hash: md5
+      md5: 0157dcc6e5e218a5d441512951b56c41.dir
+      size: 173
+      nfiles: 3
+    - path: stages/collect_metrics.py
+      hash: md5
+      md5: 694636e8292d81384c1c866d02eca62b
+      size: 938
+    params:
+      params.yaml:
+        collect_metrics:
+          metrics: metrics.json
+        reports_dir: reports
+    outs:
+    - path: reports/metrics.json
+      hash: md5
+      md5: 6bfd7004ef4e6c3d5aba92d1b8cf7d12
+      size: 296

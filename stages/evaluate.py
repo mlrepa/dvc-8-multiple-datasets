@@ -19,7 +19,7 @@ if __name__ == '__main__':
     with open(args.config) as fd:
         params = yaml.safe_load(fd)
 
-    print(f"INFO:  Running mode:     {params['run_mode']}")
+    # print(f"INFO:  Running mode:     {params['run_mode']}")
     print(f"INFO:  Use stage config: {args.config}")
     print(f"INFO:  Evaluate params:  {params['evaluate']}")
 
